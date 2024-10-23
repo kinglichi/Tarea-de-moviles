@@ -1,0 +1,330 @@
+extends Node2D
+
+@onready var pregunta_label = $TextEdit/Pregunta
+@onready var enviar_button = $TextEdit/Enviar
+@onready var cancelar_button = $TextEdit/Cancelar
+@onready var resultado_label = $TextEdit/Resultado
+@onready var tiempo_label = $TextEdit/TiempoLabel
+@onready var question_timer = $TextEdit/QuestionTimer
+@onready var respuesta_line_edit = $TextEdit/Respuesta
+@onready var respuesta2_line_edit = $TextEdit/Respuesta2
+@onready var respuesta3_line_edit = $TextEdit/Respuesta3
+@onready var audio_player = $AudioStreamPlayer
+@onready var mensaje_inicial_label = $MensajeInicial  # Label para el mensaje inicial
+@onready var text_edit = $TextEdit  # Nodo TextEdit para hacer invisible
+@onready var timer = $Timer
+
+var pregunta_numero
+var tiempo_maximo = 40
+var vidas = 5
+var respuestas_correctas = 0
+var respuestas_necesarias = 5  # Número de respuestas correctas necesarias para cambiar de escena
+var mensajes = [
+	"¡Hola, intrépido!",
+	"Estás listo para 
+	el desafío"
+]
+var mensaje_actual = 0
+
+@onready var sprites = [
+	$TextEdit/Sprite2D,
+	$TextEdit/Sprite2D2,
+	$TextEdit/Sprite2D3,
+	$TextEdit/Sprite2D4,
+	$TextEdit/Sprite2D5,
+	$TextEdit/Sprite2D6,
+	$TextEdit/Sprite2D7,
+	$TextEdit/Sprite2D8,
+	$TextEdit/Sprite2D9,
+	$TextEdit/Sprite2D10,
+	$TextEdit/Sprite2D11,
+	$TextEdit/Sprite2D12,
+	$TextEdit/Sprite2D13,
+	$TextEdit/Sprite2D14,
+	$TextEdit/Sprite2D15,
+	$TextEdit/Sprite2D16,
+	$TextEdit/Sprite2D17
+]
+
+func _ready():
+	ocultar_sprites()  # Oculta todos los sprites al inicio
+	text_edit.visible = false  # Oculta el TextEdit y los botones
+
+	mensaje_inicial_label.show()  # Muestra el mensaje inicial
+	mensaje_actual = 0
+	mostrar_mensaje()
+
+	if not question_timer:
+		print("Error: El Timer 'QuestionTimer' no está asignado. Verifica que esté correctamente conectado en el editor.")
+		return
+
+	timer = Timer.new()  # Crear una nueva instancia de Timer
+	timer.one_shot = true
+	timer.wait_time = 1.0
+	timer.autostart = false
+	add_child(timer)  # Añadir el Timer al árbol de nodos
+
+func mostrar_mensaje():
+	if mensaje_actual < mensajes.size():
+		mensaje_inicial_label.text = mensajes[mensaje_actual]
+		timer.wait_time = 2.0
+		timer.start()
+		await timer.timeout
+		mensaje_actual += 1
+		mostrar_mensaje()  # Llama a sí mismo para mostrar el siguiente mensaje
+	else:
+		mensaje_inicial_label.hide()  # Oculta el mensaje inicial después de mostrar todos los mensajes
+		text_edit.visible = true  # Muestra el TextEdit y los botones
+		preguntar()
+		respuesta_line_edit.grab_focus()
+
+func _set_controls_enabled(enabled: bool):
+	enviar_button.disabled = not enabled
+	cancelar_button.disabled = not enabled
+	respuesta_line_edit.editable = enabled
+	respuesta2_line_edit.editable = enabled
+	respuesta3_line_edit.editable = enabled
+	if enabled:
+		respuesta_line_edit.grab_focus()
+
+func ocultar_sprites():
+	for sprite in sprites:
+		sprite.visible = false  # Oculta todos los sprites
+
+func preguntar():
+	ocultar_sprites()  # Oculta todos los sprites al empezar una nueva pregunta
+	pregunta_numero = randi() % 16  # Ahora hay 20 preguntas posibles
+	resultado_label.text = ""
+	
+
+	if question_timer:
+		question_timer.start(tiempo_maximo)
+		tiempo_label.text = str(tiempo_maximo)
+
+	match pregunta_numero:
+		0:
+			$TextEdit/Sprite2D.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		1:
+			$TextEdit/Sprite2D8.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		2:
+			$TextEdit/Sprite2D9.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		3:
+			$TextEdit/Sprite2D2.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		4:
+			$TextEdit/Sprite2D10.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		5:
+			$TextEdit/Sprite2D11.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		6:
+			$TextEdit/Sprite2D3.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		7:
+			$TextEdit/Sprite2D12.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		8:
+			$TextEdit/Sprite2D13.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		9:
+			$TextEdit/Sprite2D4.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		10:
+			$TextEdit/Sprite2D14.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		11:
+			$TextEdit/Sprite2D15.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		12:
+			$TextEdit/Sprite2D5.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		13:
+			$TextEdit/Sprite2D16.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		14:
+			$TextEdit/Sprite2D17.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		15:
+			$TextEdit/Sprite2D6.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+		16:
+			$TextEdit/Sprite2D7.visible = true
+			pregunta_label.text = "¿Cuántas centenas, 
+			decenas y unidades hay?"
+
+	respuesta_line_edit.clear()
+	_set_controls_enabled(true)
+
+func responder():
+	if question_timer:
+		question_timer.stop()
+
+	var respuesta_usuario = respuesta_line_edit.text.strip_edges() + respuesta2_line_edit.text.strip_edges() + respuesta3_line_edit.text.strip_edges()
+	var respuesta_correcta = ""
+	respuesta_line_edit.clear()
+	respuesta2_line_edit.clear()
+	respuesta3_line_edit.clear()
+
+	match pregunta_numero:
+		0:
+			respuesta_correcta = "231"
+		1:
+			respuesta_correcta = "514"
+		2:
+			respuesta_correcta = "434"
+		3:
+			respuesta_correcta = "141"
+		4:
+			respuesta_correcta = "132"
+		5:
+			respuesta_correcta = "442"
+		6:
+			respuesta_correcta = "253"
+		7:
+			respuesta_correcta = "435"
+		8:
+			respuesta_correcta = "315"
+		9:
+			respuesta_correcta = "124"
+		10:
+			respuesta_correcta = "214"
+		11:
+			respuesta_correcta = "253"
+		12:
+			respuesta_correcta = "434"
+		13:
+			respuesta_correcta = "325"
+		14:
+			respuesta_correcta = "212"
+		15:
+			respuesta_correcta = "522"
+		16:
+			respuesta_correcta = "442"
+
+
+	if respuesta_usuario == respuesta_correcta:
+		resultado_label.text = "CORRECTO"
+		resultado_label.self_modulate = Color(0, 1, 0)
+		respuestas_correctas += 1
+		if respuestas_correctas >= respuestas_necesarias:
+			felicitar_y_cambiar_de_nivel()
+	else:
+		resultado_label.text = "INCORRECTO"
+		resultado_label.self_modulate = Color(1, 0, 0)
+		perder_vida()
+
+	pregunta_label.text = ""
+	tiempo_label.text = str(tiempo_maximo)
+	respuesta_line_edit.clear()
+	_set_controls_enabled(false)
+
+	timer.wait_time = 1.0
+	timer.start()
+	await timer.timeout
+	preguntar()
+
+func _on_enviar_pressed():
+	responder()
+
+func _on_cancelar_pressed():
+	if question_timer:
+		question_timer.stop()
+	resultado_label.text = "Pregunta cancelada"
+	resultado_label.self_modulate = Color(1, 0, 0)
+	pregunta_label.text = ""
+	tiempo_label.text = str(tiempo_maximo)
+	respuesta_line_edit.clear()
+	perder_vida()
+	_set_controls_enabled(false)
+	timer.wait_time = 1.0
+	timer.start()
+	await timer.timeout
+	preguntar()
+
+func _on_question_timer_timeout():
+	resultado_label.text = "Tiempo agotado"
+	resultado_label.self_modulate = Color(1, 0, 0)
+	tiempo_label.text = str(tiempo_maximo)
+	respuesta_line_edit.clear()
+	perder_vida()
+	_set_controls_enabled(false)
+	await get_tree().create_timer(1.0).timeout
+	preguntar()
+
+func felicitar_y_cambiar_de_nivel():
+	# Muestra "¡Felicidades!"
+	ocultar_todo()
+	resultado_label.text = "¡Felicidades!"
+	resultado_label.self_modulate = Color(0, 1, 0)
+	await get_tree().create_timer(1.5).timeout  # Espera 1.5 segundos
+
+	# Muestra "Siguiente nivel"
+	resultado_label.text = "Siguiente nivel"
+	await get_tree().create_timer(1.5).timeout  # Espera 1.5 segundos
+
+	# Cambia a la siguiente escena
+	get_tree().change_scene_to_file("res://juego para mañana/preguntas/Pagina2_Enemy.tscn")
+
+func perder_juego():
+	# Ocultar todos los elementos
+	ocultar_todo()
+	# Mostrar el mensaje "Perdiste"
+	resultado_label.text = "Perdiste"
+	resultado_label.self_modulate = Color(1, 0, 0)
+	resultado_label.show()
+	
+	# Esperar un momento antes de cambiar de escena
+	ocultar_todo()
+	await get_tree().create_timer(2.0).timeout
+
+	# Cambiar de escena
+	ocultar_todo()
+	get_tree().change_scene_to_file("res://Scenes 2/principal4.tscn")
+
+func ocultar_todo():
+	# Ocultar todos los elementos
+	pregunta_label.hide()
+	enviar_button.hide()
+	cancelar_button.hide()
+	respuesta_line_edit.hide()
+	respuesta2_line_edit.hide()
+	respuesta3_line_edit.hide()
+
+	# Ocultar todos los sprites
+	for sprite in sprites:
+		sprite.hide()
+
+func _process(_delta):
+	if question_timer and not question_timer.is_stopped():
+		var tiempo_restante = question_timer.time_left
+		tiempo_label.text = str(floor(tiempo_restante))
+
+func perder_vida():
+	vidas -= 1
+	var canvas_layer = get_tree().get_root().find_child("CanvasLayer", true, false)
+	if canvas_layer:
+		canvas_layer.handleHearts(vidas)
+
+	audio_player.play()
+
+	if vidas <= 0:
+		perder_juego()
